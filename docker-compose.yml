@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  braindrop_bot:
+    build: .
+    container_name: braindrop_bot
+    env_file:
+      - .env
+    restart: unless-stopped
