@@ -1,0 +1,10 @@
+{
+  "en": {
+    "welcome": "Hi there! 👋\nI'm BrainDropToNotion_Bot.\nSend me messages with #notion and I’ll save them to your Notion.",
+    "saved": "Saved to Notion ✅"
+  },
+  "ru": {
+    "welcome": "Привет! 👋\nЯ — BrainDropToNotion_Bot.\nПиши с тегом #notion — я всё сохраню в твой Notion.",
+    "saved": "Сохранено в Notion ✅"
+  }
+}

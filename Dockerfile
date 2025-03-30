@@ -1,7 +1,8 @@
-FROM python:3.10-slim
+FROM python:3.11-slim
 
 WORKDIR /app
-COPY . /app
-RUN pip install --no-cache-dir -r requirements.txt
+COPY ./bot /app
 
-CMD ["python", "bot/main.py"]
+RUN pip install --no-cache-dir python-telegram-bot requests
+
+CMD ["python", "main.py"]
