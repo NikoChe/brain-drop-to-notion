@@ -1,0 +1,27 @@
+# Игнорировать локальный файл настроек, но оставить шаблон
+.env
+!/.env.example
+auto_commit.sh
+
+# Файлы кэша Python и байт-код
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Docker-артефакты
+*.log
+
+# Папки для сборки / упаковки
+build/
+dist/
+*.egg-info/
+
+# Файлы, генерируемые ОС
+.DS_Store
+Thumbs.db
+
+# Файлы настроек редакторов и IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
