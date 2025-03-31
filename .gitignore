@@ -1,0 +1,30 @@
+# Ignore local environment file
+.env
+!/.env.example
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environment directories
+.venv/
+venv/
+ENV/
+env/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE settings
+.vscode/
+*.code-workspace
+.idea/
+*.sublime-project
+*.sublime-workspace
