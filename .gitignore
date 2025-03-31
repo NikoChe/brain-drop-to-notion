@@ -1,27 +1,55 @@
+<<<<<<< HEAD
 # Игнорировать локальный файл настроек, но оставить шаблон
 .env
 !/.env.example
 auto_commit.sh
 
 # Файлы кэша Python и байт-код
+=======
+# Ignore local environment file
+.env
+!/.env.example
+
+# Python bytecode and caches
+>>>>>>> 0dc1e07a38acef08a6f6c2f78344d014f35a5330
 __pycache__/
 *.py[cod]
 *$py.class
 
+<<<<<<< HEAD
 # Docker-артефакты
 *.log
 
 # Папки для сборки / упаковки
+=======
+# Distribution / packaging
+>>>>>>> 0dc1e07a38acef08a6f6c2f78344d014f35a5330
 build/
 dist/
 *.egg-info/
 
+<<<<<<< HEAD
 # Файлы, генерируемые ОС
 .DS_Store
 Thumbs.db
 
 # Файлы настроек редакторов и IDE
 .vscode/
+=======
+# Virtual environment directories
+.venv/
+venv/
+ENV/
+env/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE settings
+.vscode/
+*.code-workspace
+>>>>>>> 0dc1e07a38acef08a6f6c2f78344d014f35a5330
 .idea/
 *.sublime-project
 *.sublime-workspace
