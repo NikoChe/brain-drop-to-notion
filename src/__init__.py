@@ -1,90 +1,68 @@
 import os
 import requests
-import logging
 from datetime import datetime
-from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, ContextTypes, filters
-from telegram import Update
+from flask import Flask, request, jsonify
+from dotenv import load_dotenv
 
-BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-TRIGGER_PHRASE = os.getenv("TRIGGER_PHRASE", "записать")
-ALLOWED_USERS = [int(uid) for uid in os.getenv("ALLOWED_USERS", "").split(",") if uid]
+load_dotenv()
 
-# Логирование
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+NOTION_TOKEN = os.getenv("NOTION_TOKEN")
+NOTION_DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
+TRIGGER_PHRASE = os.getenv("TRIGGER_PHRASE", "#забираем")
+DEFAULT_AUTHOR = os.getenv("DEFAULT_AUTHOR", "ChatGPT")
+DEFAULT_STATUS = "черновик"
 
-logger.info("Loaded BOT_TOKEN: %s", BOT_TOKEN)
-logger.info("TRIGGER_PHRASE: %s", TRIGGER_PHRASE)
-logger.info("ALLOWED_USERS: %s", ALLOWED_USERS)
+app = Flask(__name__)
 
-# Отправка в Notion
-def send_to_notion(title: str, content: str, author: str, status="новый", category="idea"):
-    url = "https://api.notion.com/v1/pages"
-    headers = {
-        "Authorization": f"Bearer {os.getenv('NOTION_TOKEN')}",
-        "Content-Type": "application/json",
-        "Notion-Version": "2022-06-28"
-    }
-    data = {
-        "parent": {"database_id": os.getenv("NOTION_DATABASE_ID")},
+HEADERS = {
+    "Authorization": f"Bearer {NOTION_TOKEN}",
+    "Content-Type": "application/json",
+    "Notion-Version": "2022-06-28"
+}
+
+@app.route("/new-entry", methods=["POST"])
+def new_entry():
+    data = request.get_json()
+
+    print("📥 Получены данные:", data)
+
+    content = data.get("content", "").strip()
+    if TRIGGER_PHRASE.lower() not in content.lower():
+        print("⛔️ Триггерная фраза не найдена. Запись не отправлена.")
+        return jsonify({"error": "trigger not found"}), 400
+
+    project = data.get("project", "Untitled Project")
+    author = data.get("author", DEFAULT_AUTHOR)
+    status = data.get("status", DEFAULT_STATUS)
+    category = data.get("category", "idea")
+
+    title = f"{project} — {datetime.now().strftime('%Y-%m-%d %H:%M')}"
+    print("📄 Формируем запись с заголовком:", title)
+
+    notion_payload = {
+        "parent": {"database_id": NOTION_DATABASE_ID},
         "properties": {
-            "Title": {"title": [{"text": {"content": title[:100]}}]},
+            "Title": {"title": [{"text": {"content": title}}]},
             "Content": {"rich_text": [{"text": {"content": content}}]},
             "Author": {"rich_text": [{"text": {"content": author}}]},
             "Status": {"select": {"name": status}},
             "Category": {"select": {"name": category}},
-            "Date": {"date": {"start": datetime.utcnow().isoformat()}}
+            "Date": {"date": {"start": datetime.now().isoformat()}}
         }
     }
-    logger.info("SENDING TO NOTION: %s", data)
 
-    response = requests.post(url, headers=headers, json=data)
-    logger.info("NOTION API STATUS: %s", response.status_code)
-    logger.info("NOTION API RESPONSE: %s", response.text)
+    response = requests.post("https://api.notion.com/v1/pages", headers=HEADERS, json=notion_payload)
 
-    return response
+    print("📬 Ответ от Notion:")
+    print("Status:", response.status_code)
+    print("Text:", response.text)
 
-# Обработка команды /start
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    if ALLOWED_USERS and user_id not in ALLOWED_USERS:
-        logger.warning("Unauthorized user tried to access: %s", user_id)
-        return
-
-    await update.message.reply_text(
-        f"Бот запущен. Напиши *{TRIGGER_PHRASE}* чтобы отправить запись в Notion.",
-        parse_mode="Markdown"
-    )
-
-# Обработка обычного текста
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.effective_user
-    user_id = user.id
-    username = user.username or user.full_name or "Unknown"
-    message = update.message.text.strip()
-
-    logger.info("NEW MESSAGE from %s (%s): %s", username, user_id, message)
-
-    if ALLOWED_USERS and user_id not in ALLOWED_USERS:
-        logger.warning("Unauthorized user: %s", user_id)
-        return
-
-    if TRIGGER_PHRASE.lower() in message.lower():
-        title = message.split("\n")[0][:100]
-        content = message
-        author = username
-
-        send_to_notion(title=title, content=content, author=author)
-        await update.message.reply_text("✅ Запись отправлена в Notion.")
+    if response.status_code == 200:
+        return jsonify({"status": "ok"}), 200
     else:
-        logger.info("TRIGGER PHRASE NOT FOUND")
+        return jsonify({"error": "failed to create entry"}), 500
 
 if __name__ == "__main__":
-    if not BOT_TOKEN:
-        logger.error("❌ TELEGRAM_BOT_TOKEN not set. Exiting.")
-        exit(1)
-
-    app = ApplicationBuilder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), handle_message))
-    app.run_polling()
+    port = int(os.getenv("PORT", "9889"))
+    print(f"🚀 Flask-сервер запущен на порту {port}")
+    app.run(host="0.0.0.0", port=port)

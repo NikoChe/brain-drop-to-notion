@@ -1,43 +1,58 @@
 # 🧠 Brain Drop to Notion
 
-> Connect ChatGPT → Telegram → Notion. Automatically. No copy-paste. No context switching.  
-> Связка ChatGPT → Telegram → Notion. Автоматически. Без копипаста. Без переключений.
+> Connect ChatGPT → Telegram → Notion. Automatically.  
+> Связка ChatGPT → Telegram → Notion. Автоматически.
 
-**Brain Drop to Notion** — это Telegram-бот, работающий в Docker, который автоматически сохраняет утверждённый текст из ChatGPT в вашу базу данных Notion.  
-Достаточно добавить триггерную фразу (например, `#записать`) — и всё будет отправлено в Notion.
+EN:  
+**Brain Drop to Notion** is a Telegram bot running in Docker.  
+It automatically saves approved ideas from ChatGPT into your Notion via a trigger phrase.
 
----
-
-## 🚀 How It Works / Как это работает
-
-1. You chat with ChatGPT (e.g. brainstorming, writing content).  
-   Вы общаетесь с ChatGPT (например, придумываете идеи, пишете текст).
-
-2. When the message is ready, add a trigger phrase (e.g. `#записать`).  
-   Когда текст готов, добавьте триггер-фразу (например, `#записать`).
-
-3. The Telegram bot sees the message and sends it to Notion.  
-   Бот перехватывает сообщение и отправляет его в Notion.
-
-4. The record includes title, content, author, status, category, date.  
-   Запись включает заголовок, текст, автора, статус, категорию и дату.
+RU:  
+**Brain Drop to Notion** — это Telegram-бот, работающий в Docker.  
+Он сохраняет утверждённые идеи из ChatGPT в ваш Notion — по триггерной фразе.
 
 ---
 
-## 🧱 Features / Особенности
+## 🚀 How It Works / Как работает
 
-- ✅ ChatGPT → Telegram → Notion: no manual copy/paste  
-- ✅ Simple trigger phrase (`#записать`)
-- ✅ Automatic field population: Title, Content, Author, Date, Status, Category
-- ✅ Works fully on your side (privacy-first)
-- ✅ Only one user supported (open-source version)
-- ✅ Configuration via `env.example`
+EN:
+1. You brainstorm in ChatGPT  
+2. You confirm idea with a trigger phrase (e.g. `#save`)  
+3. The bot sends data to your Notion database  
+4. Fields: title, content, author, status, category, date
+
+RU:
+1. Вы работаете в ChatGPT (генерите идеи, пишете тексты)  
+2. Подтверждаете идею триггерной фразой (например, `#записать`)  
+3. Бот отправляет всё в базу Notion  
+4. Поля: заголовок, текст, автор, статус, категория, дата
+
+---
+
+## 🧱 Features / Возможности
+
+EN:
+- ChatGPT → Telegram → Notion
+- No manual copy-paste
+- Custom trigger phrase
+- Notion fields auto-filled
+- Fully local & private
+- Single user only
+- Config via `.env`
+
+RU:
+- Перенос текста без копипаста
+- Удобная фраза-триггер
+- Автозаполнение всех полей
+- Всё работает локально
+- Один пользователь
+- Простая настройка через `.env`
 
 ---
 
 ## 📦 Installation / Установка
 
-### 1. Clone the repository / Клонируйте репозиторий:
+### 1. Clone repository / Клонируйте репозиторий
 
 ```bash
 git clone https://github.com/nikochelab/brain-drop-to-notion.git
@@ -46,15 +61,17 @@ cd brain-drop-to-notion
 
 ---
 
-### 2. Copy and edit the env file / Создайте файл `.env`:
+### 2. Configure `.env` / Настройте переменные окружения
 
-#### Linux/macOS:
+macOS / Linux:
+
 ```bash
 cp env.example .env
 nano .env
 ```
 
-#### Windows:
+Windows:
+
 ```powershell
 copy env.example .env
 notepad .env
@@ -62,104 +79,125 @@ notepad .env
 
 ---
 
-### 3. Get your credentials / Получите токены:
+### 3. Get tokens / Получите токены
 
-#### Telegram:
-- Create a bot via [@BotFather](https://t.me/BotFather)
-- Get your personal Telegram ID via [@userinfobot](https://t.me/userinfobot)
-- Add it to `ALLOWED_USERS` in `.env`
+**Telegram:**
 
-#### Notion:
-- Go to [Notion Integrations](https://www.notion.so/my-integrations)
-- Create new integration → copy the token
-- Share your database with the integration
-- Copy the **Database ID** from the URL (32 characters)
+- Create bot via @BotFather  
+- Get your Telegram ID via @userinfobot  
+- Paste both into `.env`
+
+**Notion:**
+
+- Go to https://www.notion.so/my-integrations  
+- Create integration and copy the token  
+- Share your database with the integration  
+- Copy Database ID (32 characters) from URL
+
+RU:
+- Создайте бота в @BotFather  
+- Получите свой ID в @userinfobot  
+- Занесите всё в `.env`  
+- Перейдите в Notion, создайте интеграцию  
+- Расшарьте базу на неё  
+- Возьмите ID базы из URL
 
 ---
 
-### 4. Build and run the bot / Соберите и запустите бота:
+### 4. Run the bot / Запуск бота
 
 ```bash
 chmod +x run.sh
 ./run.sh
 ```
 
-Если вручную:
-```bash
-docker build -t $CONTAINER_NAME .
-docker run --rm -it --name $CONTAINER_NAME -p $PORT:$PORT --env-file .env $CONTAINER_NAME
-```
+---
+
+## 📒 Notion Template
+
+### 🅰️ Option A — Duplicate Ready Template / Дубликат готовой базы
+
+EN:  
+Use our pre-configured template → duplicate it to your Notion.  
+RU:  
+Используйте готовый шаблон — нажмите "Duplicate" → добавьте в свой Notion.
+
+👉 [🔗 Duplicate Template](https://www.notion.so/your-link-here)
 
 ---
 
-## 🧠 Example `.env` File / Пример `.env`
+### 🅱️ Option B — CSV Import / Импорт через CSV
 
-```env
-BOT_TOKEN=your_telegram_bot_token
-ALLOWED_USERS=123456789
-NOTION_TOKEN=secret_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-NOTION_DATABASE_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-TRIGGER_PHRASE=#записать
-DEFAULT_LANG=ru
-MODE=dev
-PORT=9889
-CONTAINER_NAME=braindroptonotion
-```
+EN:
+Use file `notion_template_brain_drop.csv`.  
+Go to Notion → New Page → Import → CSV → Select file.  
+**Then manually change field types** in Notion:  
+- `Status`: make it a Select  
+- `Category`: make it a Select  
+- `Date`: make it Date
 
----
-
-## 🧾 Notion Template / Шаблон Базы Notion
-
-Используйте `notion_template_brain_drop.csv` для импорта:
-- Notion → New page → Import → CSV → выберите файл
-
-Создастся таблица с полями:
-- **Title** (заголовок, max 100 символов)
-- **Content** (текст)
-- **Author** (имя)
-- **Status** (новый / черновик / готово)
-- **Category** (idea, product, task, content, general)
-- **Date** (дата создания)
+RU:
+Используйте файл `notion_template_brain_drop.csv`  
+Зайдите в Notion → New Page → Import → CSV → выберите файл  
+⚠️ После импорта поменяйте типы полей вручную:
+- `Status` → Select  
+- `Category` → Select  
+- `Date` → Date
 
 ---
 
-## 📥 Hosted Bot / Готовый бот
+## ☁️ Hosted Bot (Optional)
 
-Если не хотите запускать локально — используйте уже развернутый бот:
+EN:
+Don’t want to run locally?  
+Try the hosted bot — pay $1/month and get everything done for you.
 
-👉 [@BrainDropToNotion_Bot](https://t.me/BrainDropToNotion_Bot) — **$1 в месяц**  
-Все данные хранятся в зашифрованном виде, вы настраиваете токены через Telegram.
+RU:
+Не хотите возиться с запуском?  
+Просто подключите готового бота:
+
+👉 [@BrainDropToNotion_Bot](https://t.me/BrainDropToNotion_Bot)
+
+🔒 Ваши данные в зашифрованном виде  
+📲 Настройка прямо через Telegram  
+💰 $1 в месяц
 
 ---
 
 ## ⚠️ Limitations / Ограничения
 
-- Open-source версия поддерживает **только одного пользователя**
-- Без базы данных, подписок, админки
-- Всё запускается **локально**, вручную
+EN:
+- Only one user (open-source version)
+- No database, no multi-user
+- Manual setup required
+
+RU:
+- Только 1 пользователь
+- Нет базы, подписок, админки
+- Ручной запуск
 
 ---
 
 ## 👨‍💻 Author / Автор
 
-Разработано в [NikoCheLab] — digital-автоматизация для творцов и экспертов.
+Разработано для **NikoCheLab** — эксперименты по digital-автоматизации  
+для творцов и экспертов, которые не разбираются в коде.
 
-- GitHub: [@nikoche](https://github.com/nikoche)
-- Telegram: [@NikoChe](https://t.me/NikoChe)
+GitHub: [@NikoChe](https://github.com/NikoChe)  
+Telegram: [@NikoChe](https://t.me/NikoChe)
 
 ---
 
 ## 📄 License / Лицензия
 
-MIT — use it, fork it, build on top of it.  
-MIT — используйте, форкайте, улучшайте.
+MIT — use it, fork it, build on top.  
+MIT — используйте, форкайте, дополняйте.
 
 ---
 
 ## ⭐️ Support / Поддержка
 
-Если проект был полезен:
-- поставьте ⭐️ на GitHub
-- поделитесь с друзьями
-- оформите подписку или донат на hosted-бота
-
+- Star the repo  
+- Share with friends  
+- Try the hosted bot  
+- Поддержите проект ⭐️
